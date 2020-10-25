@@ -19,7 +19,7 @@ namespace CanadaGovCovidCsvReader.Converters
 		/// </returns>
 		public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
 		{
-			if (DateTime.TryParseExact(text, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime tmp))
+			if (DateTime.TryParse(text, out DateTime tmp))
 				return tmp;
 			return null;
 		}

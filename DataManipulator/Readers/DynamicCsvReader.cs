@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DataManipulator.Readers
 {
-    public class DynamicCsvReader : IReader<object>
+    public class DynamicCsvReader : IReader<Dictionary<string, string>>
     {
         /// <summary>
         /// Gets or sets a value indicating whether the csv file has a header.
@@ -41,13 +41,19 @@ namespace DataManipulator.Readers
         /// <returns>
         /// the data.
         /// </returns>
-        public IEnumerable<object> GetData()
+        public IEnumerable<Dictionary<string, string>> GetData()
         {
             using (var reader = new StreamReader(Path))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csv.Configuration.HasHeaderRecord = HasHeader;
-                return csv.GetRecords<dynamic>().ToArray();
+                return csv.GetRecords<dynamic>()
+                    .Select(record => 
+                    {
+                        var dict = (IDictionary<string, object>)record;
+                        return dict.ToDictionary(item => item.Key, item => item.Value.ToString());
+                    })
+                    .ToArray();
             }
         }
     }
